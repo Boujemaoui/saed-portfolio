@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Saed Boujemaoui | OSINT & Blockchain</title>
+<style>
+  /* Reset y base */
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background-color: #0b0c10;
+    font-family: 'Courier New', Courier, monospace;
+    color: #33ff33;
+    overflow-x: hidden;
+  }
+
+  /* Fondo tipo código cayendo (Matrix) */
+  canvas#matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* Contenedor principal */
+  .container {
+    position: relative;
+    z-index: 10;
+    padding: 30px;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0.2em;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+  }
+
+  h2 {
+    margin-top: 1.5em;
+    color: #0ff;
+  }
+
+  /* Terminal simulada */
+  .terminal {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    min-height: 220px;
+    box-shadow: 0 0 15px #00ff00;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    overflow-y: auto;
+  }
+
+  /* Cursor parpadeante */
+  .cursor {
+    display: inline-block;
+    width: 10px;
+    background-color: #33ff33;
+    animation: blink 1s step-start 0s infinite;
+  }
+  @keyframes blink {
+    50% { background-color: transparent; }
+  }
+
+  /* Sección imágenes de prueba */
+  .img-section {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .img-section img {
+    width: 280px;
+    height: 160px;
+    border: 2px solid #0f0;
+    border-radius: 6px;
+    object-fit: cover;
+    filter: drop-shadow(0 0 6px #0f0);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  .img-section img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Pie de página */
+  footer {
+    text-align: center;
+    color: #0f0;
+    margin: 50px 0 20px;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+  <h1>Saed Boujemaoui</h1>
+  <h2>Analista OSINT & Desarrollador Blockchain</h2>
+
+  <div class="terminal" id="terminal">
+    <span id="terminal-text"></span><span class="cursor"></span>
+  </div>
+
+  <section class="img-section" aria-label="Galería de imágenes de muestra">
+    <img src="https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=400&q=80" alt="Análisis de red" />
+    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" alt="Smart Contracts" />
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Ciberseguridad" />
+  </section>
+</div>
+
+<footer>
+  © 2025 Saed Boujemaoui - Portfolio Profesional
+</footer>
+
+<script>
+  // Código Matrix para fondo
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const letters = 'abcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%'.split('');
+  const fontSize = 16;
+  const columns = Math.floor(width / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(11, 12, 16, 0.1)';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+
+    for(let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if(drops[i] * fontSize > height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 50);
+
+  // Terminal texto simulado
+  const terminalText = document.getElementById('terminal-text');
+  const commands = [
+    '[+] Iniciando análisis OSINT...',
+    '[+] Escaneo pasivo de tráfico iniciado.',
+    '[+] Detectando puertos abiertos...',
+    '[!] Vulnerabilidad potencial detectada en puerto 8080',
+    '[+] Consultando blockchain para contratos ERC-20...',
+    '[+] Verificando integridad de smart contracts...',
+    '[+] Análisis completo. Reporte generado.',
+    '[+] Contacto: saed.secure@proton.me'
+  ];
+
+  let index = 0;
+  let charIndex = 0;
+  let currentLine = '';
+
+  function type() {
+    if(index >= commands.length) {
+      // Repetir después de pausa
+      setTimeout(() => {
+        index = 0;
+        charIndex = 0;
+        currentLine = '';
+        terminalText.textContent = '';
+        type();
+      }, 3000);
+      return;
+    }
+
+    if(charIndex < commands[index].length) {
+      currentLine += commands[index][charIndex];
+      terminalText.textContent = currentLine;
+      charIndex++;
+      setTimeout(type, 70);
+    } else {
+      terminalText.textContent = currentLine + '\n';
+      index++;
+      charIndex = 0;
+      currentLine = '';
+      setTimeout(type, 1200);
+    }
+  }
+
+  type();
+
+  // Ajustar canvas al resize
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
