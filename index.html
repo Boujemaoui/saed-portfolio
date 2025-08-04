@@ -11,10 +11,10 @@
     background-color: #0b0c10;
     font-family: 'Courier New', Courier, monospace;
     color: #33ff33;
-    overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
-  /* Fondo tipo código cayendo (Matrix) */
+  /* Fondo Matrix */
   canvas#matrix {
     position: fixed;
     top: 0; left: 0;
@@ -23,28 +23,61 @@
     z-index: 0;
   }
 
-  /* Contenedor principal */
-  .container {
+  /* Menú fijo */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.85);
+    border-bottom: 1px solid #00ff00;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem 0;
+    z-index: 20;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  nav a {
+    color: #0f0;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  nav a:hover, nav a:focus {
+    background-color: #0f0;
+    color: #000;
+    outline: none;
+  }
+
+  /* Contenedores de sección */
+  section {
+    max-width: 900px;
+    margin: 100px auto 50px; /* margen top para no tapar menu */
+    padding: 0 20px;
     position: relative;
     z-index: 10;
-    padding: 30px;
-    max-width: 900px;
-    margin: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  h1 {
+  /* Inicio */
+  #inicio h1 {
     font-size: 3rem;
-    margin-bottom: 0.2em;
+    margin-bottom: 0.1em;
     color: #00ff00;
-    text-shadow: 0 0 10px #00ff00;
+    text-shadow: 0 0 12px #00ff00;
   }
-
-  h2 {
-    margin-top: 1.5em;
+  #inicio h2 {
+    margin-top: 0;
     color: #0ff;
+    font-weight: 400;
   }
-
-  /* Terminal simulada */
   .terminal {
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid #00ff00;
@@ -52,14 +85,13 @@
     padding: 20px;
     font-size: 1.1rem;
     line-height: 1.4;
-    min-height: 220px;
+    min-height: 180px;
     box-shadow: 0 0 15px #00ff00;
     white-space: pre-wrap;
     font-family: 'Courier New', Courier, monospace;
     overflow-y: auto;
+    margin-top: 30px;
   }
-
-  /* Cursor parpadeante */
   .cursor {
     display: inline-block;
     width: 10px;
@@ -70,26 +102,53 @@
     50% { background-color: transparent; }
   }
 
-  /* Sección imágenes de prueba */
-  .img-section {
-    margin-top: 30px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+  /* Sobre mí */
+  #sobre-mi h2 {
+    color: #0ff;
+    font-size: 2rem;
+    margin-bottom: 0.25em;
   }
-  .img-section img {
-    width: 280px;
-    height: 160px;
-    border: 2px solid #0f0;
-    border-radius: 6px;
-    object-fit: cover;
-    filter: drop-shadow(0 0 6px #0f0);
-    transition: transform 0.3s ease;
-    cursor: pointer;
+  #sobre-mi p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #33ff33;
   }
-  .img-section img:hover {
-    transform: scale(1.05);
+
+  /* Servicios */
+  #servicios h2 {
+    color: #0ff;
+    font-size: 2rem;
+    margin-bottom: 0.25em;
+  }
+  #servicios ul {
+    list-style: none;
+    padding: 0;
+    font-size: 1.2rem;
+  }
+  #servicios li {
+    margin-bottom: 0.8em;
+  }
+  #servicios li::before {
+    content: "✔️ ";
+  }
+
+  /* Contacto */
+  #contacto h2 {
+    color: #0ff;
+    font-size: 2rem;
+    margin-bottom: 0.25em;
+  }
+  #contacto p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  #contacto a {
+    color: #0f0;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #contacto a:hover, #contacto a:focus {
+    text-decoration: underline;
   }
 
   /* Pie de página */
@@ -98,6 +157,22 @@
     color: #0f0;
     margin: 50px 0 20px;
     font-size: 0.9rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    #inicio h1 {
+      font-size: 2rem;
+    }
+    #sobre-mi p, #contacto p {
+      font-size: 1rem;
+    }
+    nav {
+      gap: 1rem;
+      font-size: 1rem;
+    }
   }
 </style>
 </head>
@@ -105,20 +180,45 @@
 
 <canvas id="matrix"></canvas>
 
-<div class="container">
+<nav>
+  <a href="#inicio" tabindex="1">Inicio</a>
+  <a href="#sobre-mi" tabindex="2">Sobre mí</a>
+  <a href="#servicios" tabindex="3">Servicios</a>
+  <a href="#contacto" tabindex="4">Contacto</a>
+</nav>
+
+<section id="inicio" class="visible">
   <h1>Saed Boujemaoui</h1>
   <h2>Analista OSINT & Desarrollador Blockchain</h2>
 
   <div class="terminal" id="terminal">
     <span id="terminal-text"></span><span class="cursor"></span>
   </div>
+</section>
 
-  <section class="img-section" aria-label="Galería de imágenes de muestra">
-    <img src="https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=400&q=80" alt="Análisis de red" />
-    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" alt="Smart Contracts" />
-    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Ciberseguridad" />
-  </section>
-</div>
+<section id="sobre-mi">
+  <h2>Sobre mí</h2>
+  <p>
+    Soy un profesional apasionado en análisis OSINT, marketing digital y desarrollo blockchain. Tengo amplia experiencia en la creación y despliegue de smart contracts y tokens avanzados. Mi enfoque combina la seguridad informática con la innovación tecnológica para ofrecer soluciones efectivas y confiables.
+  </p>
+</section>
+
+<section id="servicios">
+  <h2>Servicios</h2>
+  <ul>
+    <li>🔍 Análisis OSINT y evaluación de seguridad</li>
+    <li>💻 Desarrollo y despliegue de smart contracts</li>
+    <li>🔗 Creación de tokens ERC-20 y Web3</li>
+    <li>🛡️ Pentesting y auditorías de vulnerabilidades</li>
+    <li>📈 Estrategias avanzadas de marketing digital</li>
+  </ul>
+</section>
+
+<section id="contacto">
+  <h2>Contacto</h2>
+  <p>📧 Email: <a href="mailto:saed.secure@proton.me">saed.secure@proton.me</a></p>
+  <p>🔗 LinkedIn: <a href="https://www.linkedin.com/in/boujemaoui" target="_blank" rel="noopener noreferrer">linkedin.com/in/boujemaoui</a></p>
+</section>
 
 <footer>
   © 2025 Saed Boujemaoui - Portfolio Profesional
@@ -176,7 +276,6 @@
 
   function type() {
     if(index >= commands.length) {
-      // Repetir después de pausa
       setTimeout(() => {
         index = 0;
         charIndex = 0;
@@ -208,7 +307,23 @@
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
   });
+
+  // Animar secciones al hacer scroll
+  const sections = document.querySelectorAll('section');
+  function checkSections() {
+    const triggerBottom = window.innerHeight * 0.8;
+
+    sections.forEach(section => {
+      const sectionTop = section.getBoundingClientRect().top;
+      if(sectionTop < triggerBottom) {
+        section.classList.add('visible');
+      }
+    });
+  }
+  window.addEventListener('scroll', checkSections);
+  window.addEventListener('load', checkSections);
 </script>
 
 </body>
 </html>
+
